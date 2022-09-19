@@ -1,6 +1,9 @@
 package Lab2;
 
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 
 public class CP3LinkedList<E>
 {
@@ -37,6 +40,11 @@ public class CP3LinkedList<E>
         tempNode.setData(element);
         tempNode.setNext(first);
         first = tempNode;
+
+        if (last == null)
+        {
+            last = tempNode;
+        }
     }
 
     public E removeFirst()
@@ -45,8 +53,49 @@ public class CP3LinkedList<E>
         {
             throw new NoSuchElementException();
         }
+        if (last == first)
+        {
+            last = null;
+        }
+
         E tempElement = first.getData();
         first = first.getNext();
+        if (first.getPrevious() != null){
+            first.setPrevious(null);
+        }
+        return tempElement;
+    }
+
+    public void addLast(E element)
+    {
+        Node tempNode = new Node();
+        tempNode.setData(element);
+        tempNode.setPrevious(last);
+        tempNode.setNext(tempNode);
+        last = tempNode;
+
+        if (first == null)
+        {
+            first = tempNode;
+        }
+    }
+
+    public E removeLast()
+    {
+        if (last == null)
+        {
+            throw new NoSuchElementException();
+        }
+        if (last == first)
+        {
+            first = null;
+        }
+
+        E tempElement = last.getData();
+        last = last.getPrevious();
+        if (first.getNext() != null){
+            first.setNext(null);
+        }
         return tempElement;
     }
 
@@ -61,43 +110,38 @@ public class CP3LinkedList<E>
 
     public void print()
     {
-        Node focus = first;
-        while (true)
+        Node current = first;
+        while (current != null)
         {
-            System.out.println(focus.getData().toString());
-            if (focus.getNext() == null){
-                break;
-            }
-            focus = focus.getNext();
+            System.out.println(current.getData().toString());
+            current = current.getNext();
         }
     }
 
-    public int size(){
+    public int size()
+    {
         int size = 0;
-        Node focus = first;
-        while (true)
+        Node current = first;
+        while (current != null)
         {
             size++;
-            if (focus.getNext() == null){
-                break;
-            }
-            focus = focus.getNext();
+            current = current.getNext();
         }
         return size;
     }
 
-    public boolean contains(E element){
-        Node focus = first;
-        while (true)
+    public boolean contains(E element)
+    {
+        Node current = first;
+        while (current != null)
         {
-            if (focus.getData() == element){
+            if (current.getData() == element)
+            {
                 return true;
             }
-            if (focus.getNext() == null){
-                return false;
-            }
-            focus = focus.getNext();
+            current = current.getNext();
         }
+        return false;
     }
 
     private class Node
