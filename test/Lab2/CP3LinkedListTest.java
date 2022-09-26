@@ -156,5 +156,13 @@ class CP3LinkedListTest
         assertFalse(list.contains("Test2"));
     }
 
+    @Test
+    void sizeRecursion()
+    {
+        CP3LinkedList<String> list = new CP3LinkedList<String>();
+        list.addFirst("Test");
+        list.addFirst("Test2");
+        assertEquals(list.sizeRecursive(), list.size());
+    }
 
 }

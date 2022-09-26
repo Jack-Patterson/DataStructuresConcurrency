@@ -144,6 +144,19 @@ public class CP3LinkedList<E>
         return false;
     }
 
+    public int sizeRecursive(){
+        return sizeSub(first);
+    }
+
+    private int sizeSub(Node head){
+        if (head == null){
+            return 0;
+        }
+        else {
+            return 1 + sizeSub(head.getNext());
+        }
+    }
+
     private class Node
     {
         private E data;
