@@ -4,31 +4,39 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+/*
+ * Class to build an index.
+ */
 public class InvertedIndex {
     // Properties
-    private BinarySearchTreeMap<String, List<File>> index;
-    //private Map<String, List<File>> index;
+    //private BinarySearchTreeMap<String, List<Occurance>> index;
+    private Map<String, List<Occurance>> index;
 
     private Set<String> allWords;  //set of all unique words in the index
     //used in profiling the search method
+    int lineNo = -1;
 
     // Methods
     public InvertedIndex() {
-        index = new BinarySearchTreeMap<>();
-        //index = new TreeMap<>(); // Use HashMap in a separate run
+        //index = new BinarySearchTreeMap<>();
+        index = new HashMap<>(); // Use HashMap in a separate run
 
-        allWords = new HashSet();
+        allWords = new HashSet<>();
     }
 
     public void buildIndex(List<File> files) {
         for (File file : files) {
             try {
+
+                List<Integer> lineNoList = new ArrayList<>();
+
                 Scanner in = new Scanner(file);
 
                 String line;
                 String[] words;
 
                 while (in.hasNextLine()) {
+                    lineNo++;
                     //read a line
                     line = in.nextLine();
                     // parse line into words
@@ -41,21 +49,28 @@ public class InvertedIndex {
                     for (String word : words) {
                         if (!word.equals("")) {
                             if (!index.containsKey(word)) {
-                                List<File> list = new ArrayList<>();
-                                list.add(file);
+                                List<Occurance> list = new ArrayList<>();
+                                lineNoList.add(lineNo);
+                                list.add(new Occurance(file, lineNoList));
                                 index.put(word, list);
                                 allWords.add(word);
                             } else {
                                 // word already in index - check if fileName there
-                                List<File> list = index.get(word);
-                                if (!list.contains(file)) {
-                                    list.add(file);
+                                List<Occurance> list = index.get(word);
+
+                                ArrayList<File> filesList = new ArrayList<>();
+                                for (Occurance o: list){
+                                    filesList.add(o.getFile());
+                                }
+                                if (!filesList.contains(file)) {
+                                    lineNoList.add(lineNo);
+                                    list.add(new Occurance(file, lineNoList));
                                 }
                             }
                         }
                     }
                 }
-
+                lineNo = -1;
             } catch (IOException exc) {
                 System.out.println("File does not exist");
                 exc.printStackTrace();
@@ -66,16 +81,21 @@ public class InvertedIndex {
 
     public void print() {
         // Print all keys and values in the map
-        /*Set<String> keySet = index.keySet();
+        Set<String> keySet = index.keySet();
         for (String key : keySet) {
-            List<File> value = index.get(key);
+            List<Occurance> value = index.get(key);
             System.out.println(key + " : " + value);
-        }*/
+        }
+        //System.out.println("\nMap Height: " + index.height());
+        //System.out.println("\nSize: " + index.size());
     }
 
-    public List<File> search(String s) {
-        List<File> value = index.get(s);
-        return value;
+    public List<Occurance> search(String s) {
+        List<Occurance> keyOccur = new ArrayList<>();
+        for (Occurance o: index.get(s)){
+            keyOccur.add(o);
+        }
+        return keyOccur;
     }
 
     //method to profile search: call search method with all words in inverted index 
