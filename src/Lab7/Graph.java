@@ -1,6 +1,8 @@
 package Lab7;
 
-public interface Graph {
+import java.util.Queue;
+
+public interface Graph  {
     //returns the number of vertices
     int getNumVertices(); 
     
@@ -13,4 +15,6 @@ public interface Graph {
     void addEdge(int s, int d);
     
     void removeEdge(int s, int d);
+
+    void bfs(int s);
 }
